@@ -11,7 +11,27 @@ export const useAuth = () => {
   };
 
   const getToken = () => authService.getJwtToken();
+  const getUserId = () => authService.getUserId();
   const isAuthenticated = () => authService.isAuthenticated();
+  const isAdmin = () => authService.isAdmin();
+  const isBuildingManager = () => authService.isBuildingManager();
+  const getBuildingId = () => authService.getBuildingId();
+  const getFirstName = () => authService.getFirstName();
+  const getLastName = () => authService.getLastName();
+  const getBuildingName = () => authService.getBuildingName();
+  const getUnitId = () => authService.getUnitId();
 
-  return { logout, getToken, isAuthenticated };
+  return {
+    logout,
+    getToken,
+    getUserId,
+    isAuthenticated,
+    isAdmin,
+    isBuildingManager,
+    getBuildingId,
+    getFirstName,
+    getLastName,
+    getBuildingName,
+    getUnitId,
+  };
 };

@@ -14,8 +14,10 @@ axiosInstance.interceptors.request.use((config) => {
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    // Successful response — must return it
-    console.log("Response interceptor:", response);
+    const refreshedToken = response.headers["x-refreshed-token"];
+    if (refreshedToken) {
+      localStorage.setItem("jwtToken", refreshedToken);
+    }
     return response;
   },
   (error) => {
