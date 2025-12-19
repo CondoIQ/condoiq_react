@@ -6,7 +6,7 @@ const API_URL = "http://localhost:8080/api/building";
 //buidingIdAvailability
 export const checkBuildingIdAvailability = async (buildingId) => {
   try {
-    const response = await axios.get(
+    const response = await axiosInstance.get(
       `${API_URL}/getbuildingid?buildingId=${buildingId}`
     );
     return response.data;
@@ -22,7 +22,9 @@ export const checkBuildingIdAvailability = async (buildingId) => {
 // Building Name Availability
 export const checkBuildingNameAvailability = async (buildingName) => {
   try {
-    const response = await axios.get(`${API_URL}/buildingname/${buildingName}`);
+    const response = await axiosInstance.get(
+      `${API_URL}/buildingname/${buildingName}`
+    );
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -36,7 +38,7 @@ export const checkBuildingNameAvailability = async (buildingName) => {
 // Creat Building
 export const createBuilding = async (buildingData) => {
   try {
-    const response = await axios.post(
+    const response = await axiosInstance.post(
       `${API_URL}/createbuilding`,
       buildingData
     );

@@ -13,28 +13,49 @@ import {
 import {
   QrCode,
   ToggleOn,
-  Apartment,
   Logout,
   Menu as MenuIcon,
   AdminPanelSettings,
   CellTowerSharp,
+  Dashboard,
+  Feed,
+  OtherHouses,
+  DeskOutlined,
 } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+
 import NavigationBar from "../components/NavigationBar";
 import AnimatedBlob from "../components/AnimatedBlob";
+import Amenities from "./homepage-sections/amenities/Amenities";
+import HomePageDashboard from "./homepage-sections/HomePageDashboard";
+
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { isAdmin } from "../services/authService";
+
+import Units from "./homepage-sections/Units";
 const drawerWidth = 240;
 
 // Memoized Sidebar to avoid re-renders
 const Sidebar = memo(
   ({ open, selected, setSelected, setOpen, handleLogout }) => {
-    const menuItems = [
-      { label: "Feed", icon: <Apartment /> },
+    const baseMenuItems = [
+      { label: "Dashboard", icon: <Dashboard /> },
+      { label: "Feed", icon: <Feed /> },
       { label: "Maintanence Request", icon: <CellTowerSharp /> },
-      { label: "Amenities Booking", icon: <ToggleOn /> },
-      { label: "Complaint", icon: <AdminPanelSettings /> },
+      { label: "Amenities", icon: <DeskOutlined /> },
+      { label: "Complaints", icon: <AdminPanelSettings /> },
       { label: "Messaging", icon: <QrCode /> },
     ];
+
+    const adminMenuItems = [
+      { label: "Units", icon: <OtherHouses /> },
+      { label: "Building User Management", icon: <Dashboard /> },
+      { label: "Building Details", icon: <AdminPanelSettings /> },
+    ];
+
+    const menuItems = isAdmin()
+      ? [...baseMenuItems, ...adminMenuItems]
+      : baseMenuItems;
 
     return (
       <Drawer
@@ -155,8 +176,12 @@ const BackgroundBlobs = memo(() => (
 // Memoized section rendering
 const SectionRenderer = memo(({ selected }) => {
   switch (selected) {
-    // case "Buildings":
-    //   return <Buildings />;
+    case "Dashboard":
+      return <HomePageDashboard />;
+    case "Amenities":
+      return <Amenities />;
+    case "Units":
+      return <Units />;
     // case "Create Building":
     //   return <CreateBuilding />;
     // case "Create Building Users":
@@ -164,12 +189,12 @@ const SectionRenderer = memo(({ selected }) => {
     // case "Create Admin Profile":
     //   return <CreateAdminProfile />;
     default:
-      return null;
+      return <HomePageDashboard />;
   }
 });
 
 const HomePage = () => {
-  const { logout } = useAuth();
+  const { logout, isAdmin, isBuildingManager } = useAuth();
   const [open, setOpen] = useState(true);
   const [selected, setSelected] = useState("");
   const navigate = useNavigate();
@@ -185,7 +210,7 @@ const HomePage = () => {
         flexDirection: "column",
       }}
     >
-      <NavigationBar hideButtons />
+      {/* <NavigationBar hideButtons /> */}
       <BackgroundBlobs />
       <Box sx={{ display: "flex", flex: 1 }}>
         <Sidebar
