@@ -23,7 +23,8 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import AnimatedBlob from "../components/AnimatedBlob";
 import WaveDivider from "../components/WaveDivider";
-import { login } from "../services/authService";
+import { login, saveBuildingSettings } from "../services/authService";
+import buildingSettingsService from "../services/buildingSettingsService";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -51,6 +52,13 @@ const LoginPage = () => {
       });
       const res = await login(credentials.username, credentials.password);
       if (res != null) {
+        // Fetch and store building settings
+        try {
+          const settings = await buildingSettingsService.getBuildingSettings(res.buildingId);
+          saveBuildingSettings(settings);
+        } catch (settingsErr) {
+          console.error("Failed to fetch building settings", settingsErr);
+        }
         navigate("/homepage");
       }
     } catch (err) {

@@ -24,13 +24,15 @@ import {
 } from "@mui/icons-material";
 
 import NavigationBar from "../components/NavigationBar";
+import Complaints from "./homepage-sections/complaints/Complaints";
 import AnimatedBlob from "../components/AnimatedBlob";
 import Amenities from "./homepage-sections/amenities/Amenities";
 import HomePageDashboard from "./homepage-sections/HomePageDashboard";
+import BuildingSettings from "./homepage-sections/BuildingSettings";
 
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { isAdmin } from "../services/authService";
+import { isAdmin, isBuildingManager } from "../services/authService";
 
 import Units from "./homepage-sections/Units";
 const drawerWidth = 240;
@@ -43,7 +45,7 @@ const Sidebar = memo(
       { label: "Feed", icon: <Feed /> },
       { label: "Maintanence Request", icon: <CellTowerSharp /> },
       { label: "Amenities", icon: <DeskOutlined /> },
-      { label: "Complaints", icon: <AdminPanelSettings /> },
+      // { label: "Complaints", icon: <AdminPanelSettings /> }, // Moved to conditional logic
       { label: "Messaging", icon: <QrCode /> },
     ];
 
@@ -51,11 +53,35 @@ const Sidebar = memo(
       { label: "Units", icon: <OtherHouses /> },
       { label: "Building User Management", icon: <Dashboard /> },
       { label: "Building Details", icon: <AdminPanelSettings /> },
+      { label: "Building Settings", icon: <ToggleOn /> },
     ];
 
-    const menuItems = isAdmin()
-      ? [...baseMenuItems, ...adminMenuItems]
-      : baseMenuItems;
+    const { isComplaintManagementEnabled } = useAuth();
+
+    // Conditionally Add Complaints
+    if (isComplaintManagementEnabled() || isAdmin() || isBuildingManager()) {
+      const complaintsIndex = baseMenuItems.findIndex(item => item.label === "Amenities") + 1;
+      // Check if not already added/handled to avoid dups if re-render issues occur (though memo blocked it)
+      // Simplest: Reconstruct baseMenuItems dynamically or push/splice
+      // Re-declaring for clarity inside the body if needed, but memoization handles `baseMenuItems` recreation.
+      // Actually `Sidebar` is memoized but `baseMenuItems` is defined *inside*. 
+      // Correct approach:
+
+    }
+
+    // Better Approach: define all potentially available items and filter.
+    const allBaseItems = [
+      { label: "Dashboard", icon: <Dashboard /> },
+      { label: "Feed", icon: <Feed /> },
+      { label: "Maintanence Request", icon: <CellTowerSharp /> },
+      { label: "Amenities", icon: <DeskOutlined /> },
+      { label: "Complaints", icon: <AdminPanelSettings />, hidden: !isComplaintManagementEnabled() && !isAdmin() && !isBuildingManager() },
+      { label: "Messaging", icon: <QrCode /> },
+    ];
+
+    const menuItems = isAdmin() || isBuildingManager()
+      ? [...allBaseItems.filter(i => !i.hidden), ...adminMenuItems]
+      : allBaseItems.filter(i => !i.hidden);
 
     return (
       <Drawer
@@ -173,6 +199,8 @@ const BackgroundBlobs = memo(() => (
   </>
 ));
 
+
+
 // Memoized section rendering
 const SectionRenderer = memo(({ selected }) => {
   switch (selected) {
@@ -180,8 +208,12 @@ const SectionRenderer = memo(({ selected }) => {
       return <HomePageDashboard />;
     case "Amenities":
       return <Amenities />;
+    case "Complaints":
+      return <Complaints />;
     case "Units":
       return <Units />;
+    case "Building Settings":
+      return <BuildingSettings />;
     // case "Create Building":
     //   return <CreateBuilding />;
     // case "Create Building Users":

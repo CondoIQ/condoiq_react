@@ -30,7 +30,7 @@ import { useAuth } from "../../../hooks/useAuth";
 import { getUserId, getFirstName, getLastName } from "../../../services/authService";
 
 const AmenityBookingDetailsDialog = ({ open, onClose, booking, onUpdate }) => {
-    const { isAdmin, isBuildingManager } = useAuth();
+    const { isAdmin, isBuildingManager, isAmenityBookingEnabled } = useAuth();
     const userId = getUserId();
     const [note, setNote] = useState("");
     const [loading, setLoading] = useState(false);
@@ -248,7 +248,7 @@ const AmenityBookingDetailsDialog = ({ open, onClose, booking, onUpdate }) => {
                                 onChange={(e) => setNote(e.target.value)}
                             />
                             <Box display="flex" justifyContent="flex-end">
-                                <Button variant="contained" size="small" onClick={handleAddNote} disabled={loading || !note.trim()}>
+                                <Button variant="contained" size="small" onClick={handleAddNote} disabled={loading || !note.trim() || (!isAmenityBookingEnabled() && !isAdmin() && !isBuildingManager())}>
                                     Add Note Only
                                 </Button>
                             </Box>

@@ -20,6 +20,7 @@ export const useAuth = () => {
   const getLastName = () => authService.getLastName();
   const getBuildingName = () => authService.getBuildingName();
   const getUnitId = () => authService.getUnitId();
+  const getUserUnitNumber = () => authService.getUserUnitNumber();
 
   return {
     logout,
@@ -28,10 +29,15 @@ export const useAuth = () => {
     isAuthenticated,
     isAdmin,
     isBuildingManager,
+    isSecurity: authService.isSecurity,
     getBuildingId,
     getFirstName,
     getLastName,
     getBuildingName,
     getUnitId,
+    getUserUnitNumber,
+    isAmenityBookingEnabled: authService.isAmenityBookingEnabled,
+    isMaintenanceEnabled: authService.isMaintenanceEnabled,
+    isComplaintManagementEnabled: authService.isComplaintManagementEnabled,
   };
 };

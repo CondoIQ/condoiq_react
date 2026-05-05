@@ -24,7 +24,7 @@ import { useAuth } from "../../../hooks/useAuth";
 import { getUserId } from "../../../services/authService";
 
 const AmenityBookingList = ({ type = "resident", onEdit, onViewDetails, refreshTrigger = 0 }) => {
-    const { getBuildingId, isAdmin, isBuildingManager, getUnitId } = useAuth();
+    const { getBuildingId, isAdmin, isBuildingManager, getUnitId, isAmenityBookingEnabled } = useAuth();
     const buildingId = getBuildingId();
     const userId = getUserId();
     const unitId = getUnitId();
@@ -162,19 +162,25 @@ const AmenityBookingList = ({ type = "resident", onEdit, onViewDetails, refreshT
                                     <TableCell align="right">
                                         <Box display="flex" justifyContent="flex-end" gap={1} onClick={(e) => e.stopPropagation()}>
                                             {/* Edit / View Details */}
-                                            <Tooltip title="Edit">
-                                                <IconButton size="small" color="primary" onClick={() => onEdit && onEdit(booking)}>
-                                                    <Edit fontSize="small" />
-                                                </IconButton>
-                                            </Tooltip>
-
-                                            {/* Cancel */}
-                                            {booking.status !== "CANCELLED" && booking.status !== "COMPLETED" && booking.status !== "REJECTED" && (
-                                                <Tooltip title="Cancel Booking">
-                                                    <IconButton size="small" color="error" onClick={() => handleCancel(booking.bookingId)}>
-                                                        <Cancel fontSize="small" />
+                                            {/* Restrict Edit if not admin/manager and booking disabled */}
+                                            {(!(!isAmenityBookingEnabled() && !isAdmin() && !isBuildingManager())) && (
+                                                <Tooltip title="Edit">
+                                                    <IconButton size="small" color="primary" onClick={() => onEdit && onEdit(booking)}>
+                                                        <Edit fontSize="small" />
                                                     </IconButton>
                                                 </Tooltip>
+                                            )}
+
+                                            {/* Cancel */}
+                                            {/* Restrict Cancel if not admin/manager and booking disabled */}
+                                            {booking.status !== "CANCELLED" && booking.status !== "COMPLETED" && booking.status !== "REJECTED" && (
+                                                (!(!isAmenityBookingEnabled() && !isAdmin() && !isBuildingManager())) && (
+                                                    <Tooltip title="Cancel Booking">
+                                                        <IconButton size="small" color="error" onClick={() => handleCancel(booking.bookingId)}>
+                                                            <Cancel fontSize="small" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                )
                                             )}
                                         </Box>
                                     </TableCell>

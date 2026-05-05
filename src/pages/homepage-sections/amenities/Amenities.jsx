@@ -50,7 +50,7 @@ import AmenityBookingList from "./AmenityBookingList";
 import AmenityBookingCalendar from "./AmenityBookingCalendar";
 
 const Amenities = () => {
-  const { getBuildingId, isAdmin, isBuildingManager } = useAuth();
+  const { getBuildingId, isAdmin, isBuildingManager, isAmenityBookingEnabled } = useAuth();
   const buildingId = getBuildingId();
 
   const [amenities, setAmenities] = useState([]);
@@ -342,7 +342,11 @@ const Amenities = () => {
             variant="outlined"
             color="primary"
             onClick={() => handleBookClick(item)}
-            disabled={!item.isBookable}
+            // Hide if not bookable OR if user is regular user and amenity booking is disabled globally
+            disabled={!item.isBookable || (!isAmenityBookingEnabled() && !isAdmin() && !isBuildingManager())}
+            sx={{
+              display: (!isAmenityBookingEnabled() && !isAdmin() && !isBuildingManager()) ? 'none' : 'inline-flex'
+            }}
           >
             Book
           </Button>
