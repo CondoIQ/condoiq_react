@@ -3,7 +3,7 @@ import axiosInstance from "./axiosInstance";
 const API_URL = "http://localhost:8080/api/residents";
 
 //Get All Building Residents
-export const getAllBuildingResidents = async(buildingId) => {
+export const getAllBuildingResidents = async (buildingId) => {
     try {
         const response = await axiosInstance.get(`${API_URL}/buildingid`, {
             params: { buildingId },
@@ -109,6 +109,7 @@ export const deleteResidentUserAccount = async (userAccountData) => {
 };
 
 export default {
+    getAllBuildingResidents,
     getResidentsByUnitId,
     createResident,
     createResidentUserAccount,

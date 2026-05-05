@@ -21,6 +21,7 @@ export const login = async (username, password) => {
       localStorage.setItem("lastName", response.data.lastName || "");
       localStorage.setItem("buildingName", response.data.buildingName || "");
       localStorage.setItem("unitId", response.data.unitId || "");
+      localStorage.setItem("userUnitNumber", response.data.unitNumber || "");
       return response.data;
     } else {
       throw new Error(
@@ -47,6 +48,7 @@ export const logout = () => {
   localStorage.removeItem("lastName");
   localStorage.removeItem("buildingName");
   localStorage.removeItem("unitId");
+  localStorage.removeItem("userUnitNumber");
   window.location.href = "/login"; // redirect to login page
 };
 
@@ -67,6 +69,7 @@ export const getFirstName = () => localStorage.getItem("firstName");
 export const getLastName = () => localStorage.getItem("lastName");
 export const getBuildingName = () => localStorage.getItem("buildingName");
 export const getUnitId = () => localStorage.getItem("unitId");
+export const getUserUnitNumber = () => localStorage.getItem("userUnitNumber");
 
 export const isAdmin = () => {
   const roles = getUserRoles();
@@ -84,6 +87,36 @@ export const isBuildingManager = () => {
   return false;
 };
 
+export const isSecurity = () => {
+  const roles = getUserRoles();
+  if (roles.includes("SECURITY")) {
+    return true;
+  }
+  return false;
+};
+
+export const isAmenityBookingEnabled = () => {
+  const val = localStorage.getItem("amenityBookingEnabled");
+  return val === "true";
+};
+
+export const isMaintenanceEnabled = () => {
+  const val = localStorage.getItem("maintenanceEnabled");
+  return val === "true";
+};
+
+export const isComplaintManagementEnabled = () => {
+  const val = localStorage.getItem("complaintManagementEnabled");
+  return val === "true";
+};
+
+export const saveBuildingSettings = (settings) => {
+  if (!settings) return;
+  localStorage.setItem("amenityBookingEnabled", settings.amenityBookingEnabled);
+  localStorage.setItem("maintenanceEnabled", settings.maintenanceEnabled);
+  localStorage.setItem("complaintManagementEnabled", settings.complaintManagementEnabled);
+};
+
 export default {
   login,
   logout,
@@ -94,8 +127,14 @@ export default {
   getBuildingId,
   isAdmin,
   isBuildingManager,
+  isSecurity,
   getFirstName,
   getLastName,
   getBuildingName,
   getUnitId,
+  getUserUnitNumber,
+  isAmenityBookingEnabled,
+  isMaintenanceEnabled,
+  isComplaintManagementEnabled,
+  saveBuildingSettings,
 };
